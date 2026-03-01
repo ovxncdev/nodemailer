@@ -16,39 +16,6 @@ function ask(question) {
   });
 }
 
-function askHidden(question) {
-  return new Promise((resolve) => {
-    process.stdout.write(question);
-    const stdin = process.stdin;
-    const wasRaw = stdin.isRaw;
-    stdin.setRawMode(true);
-    stdin.resume();
-    stdin.setEncoding('utf8');
-
-    let input = '';
-    const onData = (char) => {
-      if (char === '\n' || char === '\r' || char === '\u0004') {
-        stdin.setRawMode(wasRaw);
-        stdin.pause();
-        stdin.removeListener('data', onData);
-        process.stdout.write('\n');
-        resolve(input);
-      } else if (char === '\u0003') {
-        process.exit();
-      } else if (char === '\u007F' || char === '\b') {
-        if (input.length > 0) {
-          input = input.slice(0, -1);
-          process.stdout.write('\b \b');
-        }
-      } else {
-        input += char;
-        process.stdout.write('•');
-      }
-    };
-    stdin.on('data', onData);
-  });
-}
-
 async function main() {
   console.log('\n╔══════════════════════════════════════╗');
   console.log('║       ProxySocket Email Sender       ║');
@@ -56,11 +23,27 @@ async function main() {
 
   // ─── Gmail credentials ─────────────────────────────────
   const gmailUser = await ask('  Gmail address: ');
-  const appPassword = await askHidden('  App password: ');
+  const rawPassword = await ask('  App password: ');
+
+  // Strip spaces from app password (Google shows it as "mlps uokh qryy uqpf")
+  const appPassword = rawPassword.replace(/\s/g, '');
+
+  if (appPassword.length === 0) {
+    console.log('\n  ✗ App password cannot be empty. Exiting.');
+    rl.close();
+    return;
+  }
 
   // ─── Email content ─────────────────────────────────────
   const subject = await ask('  Subject line: ');
-  const senderName = await ask('  Sender display name (e.g. ProxySocket): ');
+
+  if (subject.length === 0) {
+    console.log('\n  ✗ Subject line cannot be empty. Exiting.');
+    rl.close();
+    return;
+  }
+
+  const senderName = await ask('  Sender display name (e.g. ProxySocket): ') || 'ProxySocket';
 
   // ─── Template ──────────────────────────────────────────
   const templateFile = await ask('  HTML template file (e.g. invite.html): ');
