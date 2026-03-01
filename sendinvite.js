@@ -1,5 +1,5 @@
 // sendinvite.js
-// Run: npm install nodemailer chalk, then: node sendinvite.js
+// Run: npm install, then: node sendinvite.js
 
 const nodemailer = require('nodemailer');
 const fs = require('fs');
