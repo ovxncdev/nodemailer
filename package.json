@@ -1,0 +1,13 @@
+{
+  "name": "proxysocket-mailer",
+  "version": "1.0.0",
+  "description": "ProxySocket beta invite email sender",
+  "main": "sendinvite.js",
+  "scripts": {
+    "send": "node sendinvite.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.0",
+    "chalk": "4.1.2"
+  }
+}
