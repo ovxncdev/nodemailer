@@ -1,5 +1,5 @@
-// send-beta-invite.js
-// Run: npm install nodemailer, then: node send-beta-invite.js
+// sendinvite.js
+// Run: npm install nodemailer, then: node sendinvite.js
 
 const nodemailer = require('nodemailer');
 const fs = require('fs');
